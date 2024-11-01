@@ -1,0 +1,20 @@
+[
+  {
+    "username": "admin",
+    "password": "$2a$10$wEJvSOVc9/0NrWAGvIJDeeZ8gFyde2uGP6pClsLyWdFcR27dKRU8C",
+    "admin": true,
+    "super_admin": true
+  },
+  {
+    "username": "admin-low",
+    "password": "$2a$10$F67hGxQ8xAYJCcAbwGYaZO9jT6KWvZnAxqAnNb2rsPb.2rTw.Xmj6",
+    "admin": true,
+    "super_admin": false
+  },
+  {
+    "username": "base",
+    "password": "$2a$10$TarERVlYY9LN72yG0ILRheoC9cjmtALuvddqhdHDAz2LeD9l7Ezm2",
+    "admin": false,
+    "super_admin": false
+  }
+]

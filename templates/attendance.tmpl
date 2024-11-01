@@ -1,0 +1,550 @@
+<!-- templates/attendance.tmpl -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Records</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+
+
+
+    /* General Reset */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f4f6f9;
+        color: #333;
+        padding: 20px;
+    }
+
+    /* Container */
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Headings */
+    h1, h2 {
+        color: #0056b3;
+        margin-bottom: 15px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    /* Links */
+    a {
+        color: #0056b3;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    a:hover {
+        color: #003d80;
+    }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: #fafafa;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #0056b3;
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    td {
+        color: #333;
+    }
+
+    /* Buttons */
+    button {
+        background-color: #0056b3;
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #003d80;
+    }
+
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    /* Forms */
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    label {
+        font-weight: bold;
+        color: #0056b3;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="date"],
+    input[type="datetime-local"],
+    input[type="number"],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1em;
+        background-color: #f4f6f9;
+        transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="date"]:focus,
+    input[type="datetime-local"]:focus,
+    input[type="number"]:focus,
+    textarea:focus {
+        border-color: #0056b3;
+        outline: none;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+        max-height: 300px;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Message and Links */
+    .message {
+        font-size: 1.1em;
+        color: #333;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .action-links {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+    }
+
+    .action-links a, .action-links form {
+        margin-right: 10px;
+        display: inline;
+    }
+
+    /* Enhanced button styles */
+    button {
+        padding: 10px 15px;
+        font-size: 1em;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Form field styles */
+    input[type="text"],
+    input[type="password"],
+    select {
+        width: 100%;
+        padding: 8px;
+        margin: 4px 0;
+        box-sizing: border-box;
+    }
+
+    /* Navbar styling */
+    .navbar {
+        width: 100%;
+        background-color: #0056b3;
+        padding: 10px 0;
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    /* Home button styling */
+    .home-button {
+        color: #fff;
+        font-size: 1.2em;
+        text-decoration: none;
+        font-weight: bold;
+        padding: 8px 16px;
+        border-radius: 5px;
+        background-color: #0073e6;
+        transition: background-color 0.3s;
+    }
+
+    .home-button:hover {
+        background-color: #0056b3;
+    }
+
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #333; /* Dark background for contrast */
+        padding: 10px 20px;
+        color: white; /* White text for visibility */
+    }
+
+    .navbar-left a,
+    .navbar-right a {
+        color: white;
+        text-decoration: none;
+        margin: 0 10px;
+        font-weight: bold;
+    }
+
+    .navbar-left a:hover,
+    .navbar-right a:hover {
+        text-decoration: underline;
+    }
+
+    .navbar-left {
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .navbar-right .button {
+        background-color: #555; /* Grey button background */
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .navbar-right .button:hover {
+        background-color: #777; /* Slightly lighter on hover */
+    }
+
+    /* Welcome text styling */
+    .navbar-right span {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    /* Adjust for smaller screens */
+    @media (max-width: 600px) {
+        nav {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .navbar-left, .navbar-right {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+    }
+
+
+
+
+        .filter-group {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .filter-group label {
+            flex: 1;
+            min-width: 150px;
+        }
+        .filter-group label input,
+        .filter-group label select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .button {
+            background-color: #0056b3;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        .button:hover {
+            background-color: #0073e6; /* Lighten background */
+        }
+        .delete-button {
+            background-color: #d9534f;
+        }
+        .delete-button:hover {
+            background-color: #e57373; /* Lighten background */
+        }
+        .reset-button {
+            background-color: #6c757d;
+        }
+        .reset-button:hover {
+            background-color: #5a6268;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .action-buttons a.button,
+        .action-buttons form .button {
+            flex: 1; /* Make each button take equal space */
+            min-width: 150px; /* Set minimum width to prevent excessive shrinking */
+            max-width: 200px; /* Set maximum width to maintain uniformity */
+            padding: 10px 16px;
+            text-align: center;
+            font-size: 1em;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        /* Button color styling */
+        .reset-button {
+            background-color: #6c757d;
+        }
+
+        .reset-button:hover {
+            background-color: #5a6268;
+        }
+
+        .button {
+            background-color: #0056b3;
+        }
+
+        .button:hover {
+            background-color: #0073e6;
+        }
+
+        .delete-button {
+            background-color: #d9534f;
+        }
+
+        .delete-button:hover {
+            background-color: #e57373;
+        }
+
+        /* Ensure form buttons match the same style */
+        .action-buttons form .button {
+            display: inline-block;
+            width: 100%; /* Ensure button occupies full width within flex */
+            padding: 14px 16px;
+            font-size: 1em;
+        }
+
+        .action-buttons .button {
+                    display: inline-block;
+                    width: 100%; /* Ensure button occupies full width within flex */
+                    padding: 14px 16px;
+                    font-size: 1em;
+                }
+    </style>
+</head>
+<body>
+<nav>
+    <div class="navbar-left">
+        <a href="/">Home</a>
+        <a href="/attendance">Attendance</a>
+        <!-- Add other navigation links here -->
+    </div>
+    <div class="navbar-right">
+        <span>Welcome, {{.username}}</span>
+        <a href="/logout" class="button">Logout</a>
+    </div>
+</nav>
+
+    <h1>Attendance Records</h1>
+
+    <!-- Filter Section -->
+     <form action="/attendance" method="GET" id="filter-form">
+         <div class="filter-group">
+             <label>Added By:
+                  <input type="text" name="user" value="{{.selectedUser}}" placeholder="Filter by user" onchange="document.getElementById('filter-form').submit();">
+              </label>
+             <label>Date:
+                 <input type="date" name="date" value="{{.selectedDate}}" onchange="document.getElementById('filter-form').submit();">
+             </label>
+             <label>First Name:
+                 <input type="text" name="firstName" value="{{.selectedFirstName}}" placeholder="Filter by first name" onchange="document.getElementById('filter-form').submit();">
+             </label>
+             <label>Last Name:
+                 <input type="text" name="lastName" value="{{.selectedLastName}}" placeholder="Filter by last name" onchange="document.getElementById('filter-form').submit();">
+             </label>
+             <label>Reason:
+                 <select name="reason" onchange="document.getElementById('filter-form').submit();">
+                     <option value="" {{if eq .selectedReason ""}}selected{{end}}>All</option>
+                     <option value="Practice" {{if eq .selectedReason "Practice"}}selected{{end}}>Practice</option>
+                     <option value="Competition" {{if eq .selectedReason "Competition"}}selected{{end}}>Competition</option>
+                     <option value="Corporate" {{if eq .selectedReason "Corporate"}}selected{{end}}>Corporate</option>
+                     <option value="Other" {{if eq .selectedReason "Other"}}selected{{end}}>Other</option>
+                 </select>
+             </label>
+             <label>Licence State:
+                 <select name="licence_state" onchange="document.getElementById('filter-form').submit();">
+                     <option value="" {{if eq .selectedLicenceState ""}}selected{{end}}>All</option>
+                     <option value="ACT" {{if eq .selectedLicenceState "ACT"}}selected{{end}}>ACT</option>
+                     <option value="NSW" {{if eq .selectedLicenceState "NSW"}}selected{{end}}>NSW</option>
+                     <option value="VIC" {{if eq .selectedLicenceState "VIC"}}selected{{end}}>VIC</option>
+                     <option value="TAS" {{if eq .selectedLicenceState "TAS"}}selected{{end}}>TAS</option>
+                     <option value="SA" {{if eq .selectedLicenceState "SA"}}selected{{end}}>SA</option>
+                     <option value="WA" {{if eq .selectedLicenceState "WA"}}selected{{end}}>WA</option>
+                     <option value="NT" {{if eq .selectedLicenceState "NT"}}selected{{end}}>NT</option>
+                     <option value="QLD" {{if eq .selectedLicenceState "QLD"}}selected{{end}}>QLD</option>
+                 </select>
+             </label>
+         </div>
+     </form>
+
+
+    <div class="action-buttons">
+                <a href="/attendance" class="button reset-button">Reset Filters</a>
+                <a href="/attendance/new" class="button">New Attendance</a>
+                <!-- Button for admins and superAdmins to download attendance -->
+                {{if .admin}}
+                <div class="actions">
+                    <a href="/attendance/download" class="button">Download All Records</a>
+                </div>
+                {{end}}
+
+                <!-- Button for superAdmins to delete all attendance records -->
+                {{if .superAdmin}}
+                <div class="actions">
+                    <form action="/attendance/delete_all" method="POST" style="display:inline;">
+                        <button type="submit" class="button delete-button" onclick="return confirm('Are you sure you want to delete all attendance records?')">Delete All Records</button>
+                    </form>
+                </div>
+                {{end}}
+            </div>
+        </form>
+
+        <!-- Attendance Table -->
+        <table id="attendance-table">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Added By</th>
+                    <th onclick="sortTable(1)">Datetime</th>
+                    <th onclick="sortTable(2)">First Name</th>
+                    <th onclick="sortTable(3)">Last Name</th>
+                    <th onclick="sortTable(4)">Reason</th>
+                    <th onclick="sortTable(5)">Licence State</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .attendance}}
+                <tr>
+                    <td>{{.User}}</td>
+                    <td>{{.Datetime}}</td>
+                    <td>{{.FirstName}}</td>
+                    <td>{{.LastName}}</td>
+                    <td>{{.Reason}}</td>
+                    <td>{{.LicenceState}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+
+        <a href="/">Back to Home</a>
+        <script>
+        // JavaScript function to sort the table
+        let sortOrder = {}; // Store the sort order for each column
+
+        function sortTable(columnIndex) {
+            const table = document.getElementById("attendance-table");
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.rows);
+
+            // Determine the current sort order for this column
+            const currentOrder = sortOrder[columnIndex] || 'asc';
+            const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+            sortOrder[columnIndex] = newOrder; // Toggle the sort order
+
+            // Sort rows based on the content of the clicked column
+            rows.sort((a, b) => {
+                const aText = a.cells[columnIndex].innerText.toLowerCase();
+                const bText = b.cells[columnIndex].innerText.toLowerCase();
+
+                if (aText < bText) {
+                    return newOrder === 'asc' ? -1 : 1;
+                }
+                if (aText > bText) {
+                    return newOrder === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+
+            // Rebuild the table with the sorted rows
+            rows.forEach(row => tbody.appendChild(row));
+        }
+        </script>
+    </body>
+    </html>

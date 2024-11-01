@@ -1,0 +1,18 @@
+[
+  {
+    "datetime": "2024-11-03T10:23",
+    "first_name": "Kristopher",
+    "last_name": "Takken",
+    "reason": "Practice",
+    "licence_state": "ACT",
+    "user": "admin"
+  },
+  {
+    "datetime": "2024-11-01T10:21",
+    "first_name": "Kristopher",
+    "last_name": "Takken",
+    "reason": "Corporate",
+    "licence_state": "ACT",
+    "user": "base"
+  }
+]
