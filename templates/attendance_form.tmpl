@@ -293,13 +293,24 @@
                     gap: 5px;
                 }
             }
+            .banner {
+                display: none; /* Hidden by default */
+                position: fixed;
+                top: 0;
+                width: 100%;
+                padding: 10px;
+                background-color: #4CAF50; /* Green background */
+                color: white;
+                text-align: center;
+                font-size: 18px;
+                z-index: 1000;
+            }
         </style>
 </head>
 <body>
 <nav>
     <div class="navbar-left">
         <a href="/">Home</a>
-        <a href="/attendance">Attendance</a>
         <!-- Add other navigation links here -->
     </div>
     <div class="navbar-right">
@@ -307,11 +318,11 @@
         <a href="/logout" class="button">Logout</a>
     </div>
 </nav>
-
+    <div id="flashBanner" class="banner">{{ .message }}</div>
     <h1>Add New Attendance Record</h1>
     <form action="{{.action}}" method="POST">
         <label>Datetime:
-            <input type="datetime-local" name="datetime" required>
+            <input type="datetime-local" id="datetime" name="datetime" required>
         </label><br>
         <label>First Name:
             <input type="text" name="first_name" required>
@@ -319,16 +330,19 @@
         <label>Last Name:
             <input type="text" name="last_name" required>
         </label><br>
-        <label>Reason:
+        <label>Please choose reason for attendance:
             <select name="reason" required>
+                <option value="" disabled selected>----</option>
                 <option value="Practice">Practice</option>
                 <option value="Competition">Competition</option>
                 <option value="Corporate">Corporate</option>
+                <option value="Come and try">Come and try</option>
                 <option value="Other">Other</option>
             </select>
         </label><br>
-        <label>Licence State:
+        <label>Licence Please choose Firearms/Drivers licence state:
             <select name="licence_state" required>
+                <option value="" disabled selected>----</option>
                 <option value="ACT">ACT</option>
                 <option value="NSW">NSW</option>
                 <option value="VIC">VIC</option>
@@ -342,5 +356,34 @@
         <button type="submit">Add Record</button>
     </form>
     <a href="/attendance">Back to Attendance Records</a>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const banner = document.getElementById("flashBanner");
+            if (banner.textContent.trim() !== "") {
+                banner.style.display = "block";
+                setTimeout(() => {
+                    banner.style.display = "none";
+                }, 3000); // Hide after 3 seconds
+            }
+
+            // Set the datetime input field to the current date and time
+            const datetimeInput = document.getElementById("datetime");
+            const now = new Date();
+            const formattedDateTime = now.toISOString().slice(0, 16); // Format to "YYYY-MM-DDTHH:MM" for datetime-local
+            datetimeInput.value = formattedDateTime;
+        });
+
+        // Form validation to ensure a valid option is selected
+        function validateForm() {
+            const reason = document.getElementById("reason");
+            const licenceState = document.getElementById("licence_state");
+
+            if (reason.value === "" || licenceState.value === "") {
+                alert("Please select a valid option for Reason and Licence State.");
+                return false; // Prevent form submission
+            }
+            return true; // Allow form submission
+        }
+    </script>
 </body>
 </html>
