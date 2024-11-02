@@ -40,8 +40,9 @@
     <div class="nav-container">
         <h1>Welcome to the Membership Manager</h1>
         <a href="/attendance" class="nav-link">View Attendance Records</a>
-        <a href="/users" class="nav-link">Manage Users</a>
-        <a href="/login" class="nav-link">login</a>
+        {{ if .isAdmin }}
+            <a href="/users" class="nav-link">Manage Users</a>
+        {{ end }}
         <a href="/logout" class="nav-link logout-button">Logout</a>
     </div>
 </body>
