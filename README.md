@@ -129,7 +129,7 @@ attendance-app/
 │   ├── attendance.tmpl
 │   └── attendance_form.tmpl
 ├── static/
-│   └── [static files like CSS, JS]
+│   └── style.css
 ├── users.json
 └── attendance.json
 ```
