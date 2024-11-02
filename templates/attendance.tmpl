@@ -414,7 +414,6 @@
 <nav>
     <div class="navbar-left">
         <a href="/">Home</a>
-        <a href="/attendance">Attendance</a>
         <!-- Add other navigation links here -->
     </div>
     <div class="navbar-right">
@@ -446,6 +445,7 @@
                      <option value="Practice" {{if eq .selectedReason "Practice"}}selected{{end}}>Practice</option>
                      <option value="Competition" {{if eq .selectedReason "Competition"}}selected{{end}}>Competition</option>
                      <option value="Corporate" {{if eq .selectedReason "Corporate"}}selected{{end}}>Corporate</option>
+                     <option value="Come and try">Come and try</option>
                      <option value="Other" {{if eq .selectedReason "Other"}}selected{{end}}>Other</option>
                  </select>
              </label>
