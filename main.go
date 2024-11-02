@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -400,11 +401,15 @@ func newAttendanceForm(c *gin.Context) {
 	session.Delete("flash") // Clear flash message after retrieval
 	session.Save()
 
-	// Pass the flash message to the template
+	// Get the current time in the correct format for datetime-local
+	now := time.Now().Format("2006-01-02T15:04")
+
+	// Pass the flash message and default datetime to the template
 	c.HTML(http.StatusOK, "attendance_form.tmpl", gin.H{
 		"action":   "/attendance/new",
 		"username": username,
 		"message":  flashMessage, // Display flash message if available
+		"datetime": now,          // Pass current date and time
 	})
 }
 
