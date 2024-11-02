@@ -24,12 +24,13 @@ func main() {
 	router.LoadHTMLGlob("templates/*")
 	router.Static("/static", "./static")
 
-	router.GET("/", showHomePage)
-
 	// Define routes for authentication
 	router.GET("/login", showLoginForm)
 	router.POST("/login", loginUser)
 	router.GET("/logout", logoutUser)
+
+	router.Use(requireLoginMiddleware)
+	router.GET("/", showHomePage)
 
 	// Define routes for user management
 	userRoutes := router.Group("/users")
@@ -68,8 +69,26 @@ func main() {
 	router.Run(":80")
 }
 
+func requireLoginMiddleware(c *gin.Context) {
+	session := sessions.Default(c)
+	if session.Get("username") == nil {
+		// If user is not logged in, redirect to the login page
+		c.Redirect(http.StatusFound, "/login")
+		c.Abort() // Prevents further processing of the request
+		return
+	}
+	c.Next() // Continue to the next handler if logged in
+}
+
 func showHomePage(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", nil)
+	session := sessions.Default(c)
+	username, _ := session.Get("username").(string)
+	isAdmin, _ := session.Get("admin").(bool)
+
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{
+		"username": username,
+		"isAdmin":  isAdmin,
+	})
 }
 
 // initDefaultSuperUser checks if there are any users in the system.
@@ -231,7 +250,7 @@ func loginUser(c *gin.Context) {
 			session.Set("superAdmin", user.SuperAdmin)
 			session.Save()
 
-			c.Redirect(http.StatusFound, "/attendance")
+			c.Redirect(http.StatusFound, "/")
 			return
 		}
 	}
@@ -240,7 +259,16 @@ func loginUser(c *gin.Context) {
 
 // logoutUser handles user logout by clearing session or cookies.
 func logoutUser(c *gin.Context) {
-	// Clear session or cookie here
+	// Retrieve the session
+	session := sessions.Default(c)
+
+	// Clear the session data
+	session.Clear()
+
+	// Save the session to persist changes
+	session.Save()
+
+	// Redirect to the login page
 	c.Redirect(http.StatusFound, "/login")
 }
 
@@ -363,13 +391,20 @@ func deleteUser(c *gin.Context) {
 func newAttendanceForm(c *gin.Context) {
 	session := sessions.Default(c)
 	username, ok := session.Get("username").(string)
-
 	if !ok || username == "" {
 		username = "Guest" // Fallback if username is missing
 	}
+
+	// Retrieve and clear the flash message if it exists
+	flashMessage, _ := session.Get("flash").(string)
+	session.Delete("flash") // Clear flash message after retrieval
+	session.Save()
+
+	// Pass the flash message to the template
 	c.HTML(http.StatusOK, "attendance_form.tmpl", gin.H{
 		"action":   "/attendance/new",
 		"username": username,
+		"message":  flashMessage, // Display flash message if available
 	})
 }
 
@@ -398,7 +433,13 @@ func addAttendance(c *gin.Context) {
 		c.HTML(http.StatusInternalServerError, "error.tmpl", gin.H{"message": "Failed to add attendance"})
 		return
 	}
-	c.Redirect(http.StatusFound, "/attendance")
+
+	// Set a flash message in the session
+	session.Set("flash", "New record was added")
+	session.Save()
+
+	// Redirect to the form with the message
+	c.Redirect(http.StatusFound, "/attendance/new")
 }
 
 // downloadAttendance exports all attendance records as JSON.
@@ -444,7 +485,8 @@ func downloadAttendance(c *gin.Context) {
 func filterAttendance(records []Attendance, date, firstName, lastName, reason, licenceState, user string) []Attendance {
 	var filtered []Attendance
 	for _, record := range records {
-		if (date == "" || record.Datetime[:10] == date) &&
+		recordDate := record.Datetime[:10] // Extract only the date part (YYYY-MM-DD)
+		if (date == "" || recordDate == date) &&
 			(firstName == "" || record.FirstName == firstName) &&
 			(lastName == "" || record.LastName == lastName) &&
 			(reason == "" || record.Reason == reason) &&
@@ -462,8 +504,7 @@ func listAttendance(c *gin.Context) {
 	session := sessions.Default(c)
 	username, ok := session.Get("username").(string)
 	if !ok || username == "" {
-		// If no username is found in the session, set a default value
-		username = "Guest"
+		username = "Guest" // Default value if no user is logged in
 	}
 
 	// Load all users from the JSON file
@@ -473,7 +514,7 @@ func listAttendance(c *gin.Context) {
 		return
 	}
 
-	// Determine the user's admin and superAdmin status by looking up in users.json
+	// Determine the user's admin and superAdmin status
 	var isAdmin, isSuperAdmin bool
 	for _, user := range users {
 		if user.Username == username {
@@ -483,6 +524,14 @@ func listAttendance(c *gin.Context) {
 		}
 	}
 
+	// Retrieve filter values from query parameters
+	date := c.Query("date")
+	firstName := c.Query("firstName")
+	lastName := c.Query("lastName")
+	reason := c.Query("reason")
+	licenceState := c.Query("licence_state")
+	filterUser := c.Query("user")
+
 	// Retrieve all attendance records
 	attendance, err := GetAllAttendance()
 	if err != nil {
@@ -490,12 +539,21 @@ func listAttendance(c *gin.Context) {
 		return
 	}
 
-	// Pass the username, admin, and superAdmin roles to the template
+	// Filter the attendance records based on the parameters
+	filteredAttendance := filterAttendance(attendance, date, firstName, lastName, reason, licenceState, filterUser)
+
+	// Pass data to the template, including the filters and filtered results
 	c.HTML(http.StatusOK, "attendance.tmpl", gin.H{
-		"username":   username,
-		"attendance": attendance,
-		"admin":      isAdmin,
-		"superAdmin": isSuperAdmin,
+		"username":             username,
+		"attendance":           filteredAttendance,
+		"admin":                isAdmin,
+		"superAdmin":           isSuperAdmin,
+		"selectedDate":         date,
+		"selectedUser":         filterUser,
+		"selectedFirstName":    firstName,
+		"selectedLastName":     lastName,
+		"selectedReason":       reason,
+		"selectedLicenceState": licenceState,
 	})
 }
 
