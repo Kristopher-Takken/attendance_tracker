@@ -322,8 +322,9 @@
     <h1>Add New Attendance Record</h1>
     <form action="{{.action}}" method="POST">
         <label>Datetime:
-            <input type="datetime-local" id="datetime" name="datetime" required>
+            <input type="datetime-local" id="datetime" name="datetime" required value="{{.datetime}}">
         </label><br>
+
         <label>First Name:
             <input type="text" name="first_name" required>
         </label><br>
@@ -340,7 +341,7 @@
                 <option value="Other">Other</option>
             </select>
         </label><br>
-        <label>Licence Please choose Firearms/Drivers licence state:
+        <label>Please choose Firearms/Drivers licence state:
             <select name="licence_state" required>
                 <option value="" disabled selected>----</option>
                 <option value="ACT">ACT</option>
@@ -366,11 +367,6 @@
                 }, 3000); // Hide after 3 seconds
             }
 
-            // Set the datetime input field to the current date and time
-            const datetimeInput = document.getElementById("datetime");
-            const now = new Date();
-            const formattedDateTime = now.toISOString().slice(0, 16); // Format to "YYYY-MM-DDTHH:MM" for datetime-local
-            datetimeInput.value = formattedDateTime;
         });
 
         // Form validation to ensure a valid option is selected
